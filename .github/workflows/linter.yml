@@ -1,0 +1,37 @@
+
+name: Linter
+
+on:
+  push: null
+  pull_request: null
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      # contents permission to clone repo
+      contents: read
+      packages: read
+      # issues and pr permissions to write results as pr comment
+      issues: write
+      pull-requests: write
+      # report github actions status check
+      statuses: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # linter needs full git history to get list of files that changed across commits
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Super Linter
+        uses: super-linter/super-linter@v8.6.0
+        env:
+          # report to gh actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
